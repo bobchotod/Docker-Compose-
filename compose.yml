@@ -1,0 +1,27 @@
+services:
+  web:
+    build: .
+    container_name: shop_web
+    ports:
+      - "8080:80"
+    volumes:
+      - ./web:/var/www/html
+    depends_on:
+      - db
+    restart: unless-stopped     # ← само веднъж!
+
+  db:
+    image: mysql:8.0
+    container_name: shop_db
+    restart: unless-stopped     # ← само веднъж!
+    environment:
+      MYSQL_ROOT_PASSWORD: secret123
+      MYSQL_DATABASE: web_project
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  db_data:
